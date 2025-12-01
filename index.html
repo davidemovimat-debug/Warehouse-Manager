@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Warehouse Sales Manager</title>
+<style>
+* { -webkit-user-select: none; -webkit-touch-callout: none; }
+input, textarea, button { -webkit-user-select: text; }
+
+:root {
+  --primary: #007aff;
+  --primary-dark: #0051d5;
+  --primary-light: #e8f4ff;
+  --secondary: #5ac8fa;
+  --danger: #ff3b30;
+  --success: #34c759;
+  --warning: #ff9500;
+  --bg-light: #f8f9fa;
+  --bg-white: #ffffff;
+  --border: #e5e7eb;
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b7280;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg-light);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+#mainContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+}
+
+header {
+  background: var(--bg-white);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  z-index: 1000;
+  flex-shrink: 0;
+  min-height: 44px;
+}
+
+.icon-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.3rem;
+  background: transparent;
+  border: none;
+  transition: background 0.2s;
+}
+
+.icon-btn:active {
+  background: var(--primary-light);
+}
+
+.page-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 1;
+  text-align: center;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+.hidden { display: none !important; }
+
+.home-hero {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  padding: 24px 16px;
+  text-align: center;
+  color: white;
+}
+
+.home-hero h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.5px;
+}
+
+.home-hero p {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 16px;
+  max-width: 100%;
+}
+
+.home-card {
+  background: var(--bg-white);
+  border-radius: 16px;
+  padding: 20px 12px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 100px;
+}
+
+.home-card:active {
+  transform: scale(0.95);
+  background: var(--primary-light);
+}
+
+.card-icon {
+  font-size: 2rem;
+}
+
+.section {
+  display: none;
+  padding: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.section.active {
+  display: block;
+}
+
+.btn-add {
+  width: 100%;
+  padding: 12px;
+  background: var(--primary);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-bottom: 12px;
+}
+
+.btn-add:active {
+  background: var(--primary-dark);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: var(--primary);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-top: 16px;
+}
+
+.btn-primary:active {
+  background: var(--primary-dark);
+}
+
+.list-item {
+  background: var(--bg-white);
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-left: 4px solid var(--primary);
+}
+
+.list-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+
+.list-item-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  flex: 1;
+}
+
+.list-item-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.list-item-actions button {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: var(--bg-light);
+  border-radius: 8px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  padding: 0;
+}
+
+.list-item-actions button:active {
+  background: var(--primary-light);
+}
+
+.list-item-content {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 6px;
+  word-wrap: break-word;
+}
+
+.list-item-meta {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--text-secondary);
+}
+
+.empty-state-icon {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+  opacity: 0.5;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: inherit;
+  box-sizing: border-box;
+  background: var(--bg-white);
+  color: var(--text-primary);
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.calc-result {
+  background: var(--success);
+  color: white;
+  padding: 12px;
+  border-radius: 10px;
+  margin-top: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+@media (min-width: 1024px) {
+  .home-grid {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+  
+  .home-card {
+    min-height: 120px;
+  }
+  
+  .content {
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="mainContainer">
+  <header id="pageHeader" class="hidden">
+    <button class="icon-btn" id="backBtn">←</button>
+    <span class="page-title" id="pageTitle"></span>
+    <button class="icon-btn" id="homeBtn">🏠</button>
+  </header>
+
+  <div class="content">
+    <div id="homePage">
+      <div class="home-hero">
+        <h1>DASHBOARD</h1>
+        <p>Gestione lavoro</p>
+      </div>
+      <div id="todayReminders" style="padding: 16px; color: var(--text-secondary); font-size: 0.9rem;"></div>
+      <div class="home-grid">
+        <div class="home-card" id="btnMisure">
+          <div class="card-icon">📏</div>
+          <div>Calcola misure</div>
+        </div>
+        <div class="home-card" id="btnPromemoria">
+          <div class="card-icon">🔔</div>
+          <div>Promemoria</div>
+        </div>
+        <div class="home-card" id="btnAppunti">
+          <div class="card-icon">📝</div>
+          <div>Appunti</div>
+        </div>
+        <div class="home-card" id="btnConfig">
+          <div class="card-icon">⚙️</div>
+          <div>Config</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROMEMORIA -->
+    <div id="promemoria" class="section">
+      <button class="btn-add" id="btnNewReminder">+ Nuovo Promemoria</button>
+      <div id="reminderList"></div>
+    </div>
+
+    <div id="promemoriaEdit" class="section">
+      <div class="form-group">
+        <label>Cliente*</label>
+        <input id="remCliente" placeholder="Nome cliente">
+      </div>
+      <div class="form-group">
+        <label>Note</label>
+        <textarea id="remNote" placeholder="Scrivi le tue note..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Data/ora avviso</label>
+        <input type="datetime-local" id="remData">
+      </div>
+      <button class="btn-primary" id="btnSaveReminder">SALVA</button>
+    </div>
+
+    <!-- APPUNTI -->
+    <div id="appunti" class="section">
+      <button class="btn-add" id="btnNewNote">+ Nuovo Appunto</button>
+      <div id="notesList"></div>
+    </div>
+
+    <div id="appuntiEdit" class="section">
+      <div class="form-group">
+        <label>Appunto</label>
+        <textarea id="noteText" placeholder="Scrivi il tuo appunto..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Cliente*</label>
+        <input id="noteCliente" placeholder="Nome cliente">
+      </div>
+      <button class="btn-primary" id="btnSaveNote">SALVA</button>
+    </div>
+
+    <!-- MISURE -->
+    <div id="misure" class="section">
+      <div class="form-group">
+        <label>Larghezza (mm)</label>
+        <input id="larghezza" type="number" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label>Profondità (mm)</label>
+        <input id="profondita" type="number" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label>Altezza (mm)</label>
+        <input id="altezza" type="number" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label>Numero Vassoi</label>
+        <input id="numVassoi" type="number" placeholder="0">
+      </div>
+      <button class="btn-primary" id="btnCalcM2">Calcola m²</button>
+      <div id="resM2"></div>
+      <button class="btn-primary" id="btnCalcM3">Calcola m³</button>
+      <div id="resM3"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let historyStack = [];
+let reminderEditIndex = null;
+let noteEditIndex = null;
+let reminders = [];
+let notes = [];
+
+async function loadData() {
+  try {
+    const remResult = await window.storage.get('reminders');
+    reminders = remResult ? JSON.parse(remResult.value) : [];
+  } catch (e) {
+    reminders = [];
+  }
+  try {
+    const noteResult = await window.storage.get('notes');
+    notes = noteResult ? JSON.parse(noteResult.value) : [];
+  } catch (e) {
+    notes = [];
+  }
+}
+
+function saveData() {
+  window.storage.set('reminders', JSON.stringify(reminders));
+  window.storage.set('notes', JSON.stringify(notes));
+}
+
+function showSection(id, title) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('homePage').classList.add('hidden');
+  document.getElementById(id).classList.add('active');
+  document.getElementById('pageHeader').classList.remove('hidden');
+  document.getElementById('pageTitle').innerText = title;
+  historyStack.push(id);
+  if (id === 'promemoria') loadReminders();
+  if (id === 'appunti') loadNotes();
+}
+
+function goBack() {
+  historyStack.pop();
+  const prev = historyStack.pop();
+  if (!prev) return goHome();
+  const titles = { promemoria: 'PROMEMORIA', appunti: 'APPUNTI', misure: 'CALCOLO MISURE', promemoriaEdit: 'NUOVO PROMEMORIA', appuntiEdit: 'NUOVO APPUNTO' };
+  showSection(prev, titles[prev] || prev);
+}
+
+function goHome() {
+  document.getElementById('homePage').classList.remove('hidden');
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('pageHeader').classList.add('hidden');
+  historyStack = [];
+}
+
+// EVENT LISTENERS
+document.getElementById('btnPromemoria').onclick = () => showSection('promemoria', 'PROMEMORIA');
+document.getElementById('btnAppunti').onclick = () => showSection('appunti', 'APPUNTI');
+document.getElementById('btnMisure').onclick = () => showSection('misure', 'CALCOLO MISURE');
+document.getElementById('backBtn').onclick = goBack;
+document.getElementById('homeBtn').onclick = goHome;
+document.getElementById('btnNewReminder').onclick = () => {
+  reminderEditIndex = null;
+  document.getElementById('remCliente').value = '';
+  document.getElementById('remNote').value = '';
+  document.getElementById('remData').value = '';
+  showSection('promemoriaEdit', 'NUOVO PROMEMORIA');
+};
+document.getElementById('btnSaveReminder').onclick = () => {
+  const cliente = document.getElementById('remCliente').value.trim();
+  if (!cliente) { alert('Cliente obbligatorio'); return; }
+  const note = document.getElementById('remNote').value;
+  const dataAvviso = document.getElementById('remData').value;
+  const dataInserimento = new Date().toLocaleString('it-IT');
+  const obj = { cliente, note, dataAvviso, dataInserimento };
+  if (reminderEditIndex === null) reminders.push(obj);
+  else reminders[reminderEditIndex] = obj;
+  saveData();
+  historyStack = [];
+  showSection('promemoria', 'PROMEMORIA');
+};
+document.getElementById('btnNewNote').onclick = () => {
+  noteEditIndex = null;
+  document.getElementById('noteText').value = '';
+  document.getElementById('noteCliente').value = '';
+  showSection('appuntiEdit', 'NUOVO APPUNTO');
+};
+document.getElementById('btnSaveNote').onclick = () => {
+  const testo = document.getElementById('noteText').value;
+  const cliente = document.getElementById('noteCliente').value.trim();
+  if (!cliente) { alert('Cliente obbligatorio'); return; }
+  const dataInserimento = new Date().toLocaleString('it-IT');
+  const obj = { testo, cliente, dataInserimento };
+  if (noteEditIndex === null) notes.push(obj);
+  else notes[noteEditIndex] = obj;
+  saveData();
+  historyStack = [];
+  showSection('appunti', 'APPUNTI');
+};
+document.getElementById('btnCalcM2').onclick = () => {
+  const l = parseFloat(document.getElementById('larghezza').value);
+  const p = parseFloat(document.getElementById('profondita').value);
+  const v = parseFloat(document.getElementById('numVassoi').value);
+  if (!l || !p || !v) { alert('Inserire tutti i valori'); return; }
+  const totale = (l / 1000) * (p / 1000) * v;
+  document.getElementById('resM2').innerHTML = `<div class="calc-result">m²: ${totale.toFixed(2)}</div>`;
+};
+document.getElementById('btnCalcM3').onclick = () => {
+  const l = parseFloat(document.getElementById('larghezza').value);
+  const p = parseFloat(document.getElementById('profondita').value);
+  const a = parseFloat(document.getElementById('altezza').value);
+  const v = parseFloat(document.getElementById('numVassoi').value);
+  if (!l || !p || !a || !v) { alert('Inserire tutti i valori'); return; }
+  const totale = (l / 1000) * (p / 1000) * (a / 1000) * v;
+  document.getElementById('resM3').innerHTML = `<div class="calc-result">m³: ${totale.toFixed(3)}</div>`;
+};
+
+function loadReminders() {
+  const div = document.getElementById('reminderList');
+  if (reminders.length === 0) { div.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div>Nessun promemoria</div>'; return; }
+  div.innerHTML = '';
+  reminders.forEach((r, i) => {
+    const el = document.createElement('div');
+    el.className = 'list-item';
+    el.innerHTML = `
+      <div class="list-item-header">
+        <div class="list-item-title">${r.cliente}</div>
+        <div class="list-item-actions">
+          <button onclick="editReminder(${i})">✏️</button>
+          <button onclick="deleteReminder(${i})">🗑️</button>
+        </div>
+      </div>
+      <div class="list-item-content">${r.note || '-'}</div>
+      <div class="list-item-meta">Avviso: ${r.dataAvviso || 'Non impostato'}</div>
+    `;
+    div.appendChild(el);
+  });
+}
+
+function editReminder(i) {
+  reminderEditIndex = i;
+  document.getElementById('remCliente').value = reminders[i].cliente;
+  document.getElementById('remNote').value = reminders[i].note;
+  document.getElementById('remData').value = reminders[i].dataAvviso;
+  showSection('promemoriaEdit', 'MODIFICA PROMEMORIA');
+}
+
+function deleteReminder(i) {
+  if (confirm('Cancellare?')) { reminders.splice(i, 1); saveData(); loadReminders(); }
+}
+
+function loadNotes() {
+  const div = document.getElementById('notesList');
+  if (notes.length === 0) { div.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div>Nessun appunto</div>'; return; }
+  div.innerHTML = '';
+  notes.forEach((n, i) => {
+    const el = document.createElement('div');
+    el.className = 'list-item';
+    el.innerHTML = `
+      <div class="list-item-header">
+        <div class="list-item-title">${n.cliente}</div>
+        <div class="list-item-actions">
+          <button onclick="editNote(${i})">✏️</button>
+          <button onclick="deleteNote(${i})">🗑️</button>
+        </div>
+      </div>
+      <div class="list-item-content">${n.testo.substring(0, 60)}...</div>
+      <div class="list-item-meta">${n.dataInserimento}</div>
+    `;
+    div.appendChild(el);
+  });
+}
+
+function editNote(i) {
+  noteEditIndex = i;
+  document.getElementById('noteText').value = notes[i].testo;
+  document.getElementById('noteCliente').value = notes[i].cliente;
+  showSection('appuntiEdit', 'MODIFICA APPUNTO');
+}
+
+function deleteNote(i) {
+  if (confirm('Cancellare?')) { notes.splice(i, 1); saveData(); loadNotes(); }
+}
+
+loadData();
+
+function showTodayReminders() {
+  const today = new Date().toISOString().split('T')[0];
+  const todayRems = reminders.filter(r => r.dataAvviso && r.dataAvviso.startsWith(today));
+  const div = document.getElementById('todayReminders');
+  if (todayRems.length === 0) {
+    div.innerHTML = '<p style="margin: 0; text-align: center; opacity: 0.6;">Nessun promemoria per oggi</p>';
+  } else {
+    div.innerHTML = '<strong style="display: block; margin-bottom: 8px;">📅 Oggi:</strong>' + 
+      todayRems.map(r => `<div style="margin-bottom: 6px; padding: 8px; background: var(--primary-light); border-radius: 8px;">
+        <strong>${r.cliente}</strong> - ${r.dataAvviso.split('T')[1] || ''}<br>
+        <small>${r.note || '-'}</small>
+      </div>`).join('');
+  }
+}
+
+setInterval(showTodayReminders, 60000);
+showTodayReminders();
+</script>
+
+</body>
+</html>
